@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#000000</color>
+    <color name="colorPrimaryDark">#303F9F</color>
+    <color name="colorAccent">#FF4081</color>
+    <color name="colorDay1">#00b2ff</color>
+    <color name="colorNight1">#002b3e</color>
+    <color name="colorDay2">#9de1ff</color>
+    <color name="colorNight2">#00549e</color>
+    <color name="colorDay3">#00eaff</color>
+    <color name="colorNight3">#0026ff</color>
+    <color name="colorDay4">#6bfdd9</color>
+    <color name="colorNight4">#008f37</color>
+    <color name="colorDay5">#ff00f7</color>
+    <color name="colorNight5">#14003e</color>
+    <color name="text_color_primary">#ffffff</color>
+</resources>

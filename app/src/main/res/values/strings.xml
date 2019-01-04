@@ -1,0 +1,8 @@
+<resources>
+
+    <!-- Strings for app title names -->
+    <string name="app_name">4Cast</string>
+    <string name="activity_settings">4Cast: Settings</string>
+
+
+</resources>

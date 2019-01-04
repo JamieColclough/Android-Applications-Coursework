@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merge xmlns:android="http://schemas.android.com/apk/res/android">
+
+
+<TextView
+android:id="@+id/date_field"
+android:layout_width="wrap_content"
+android:layout_height="wrap_content"
+android:layout_centerHorizontal="true"
+android:textColor="#FFFFFF"
+android:textAppearance="?android:attr/textAppearanceMedium"
+android:textSize="24sp"/>
+
+    <TextView
+        android:id="@+id/time_field"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/date_field"
+        android:layout_centerHorizontal="true"
+        android:textColor="#FFFFFF"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        />
+
+
+<ImageView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/weather_image"
+    android:layout_height="200dp"
+    android:layout_width="200dp"
+    android:layout_below="@id/time_field"
+    android:src="@drawable/clear_day"
+    android:tileMode="repeat"
+    android:layout_centerInParent="true"
+    android:layout_marginBottom="@dimen/weather_image_padding"
+    android:layout_marginTop="@dimen/weather_image_padding"
+
+    />
+
+<TextView
+    android:id="@+id/details_field"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_below="@id/weather_image"
+    android:layout_centerHorizontal="true"
+    android:textColor="#FFFFFF"
+    android:textAppearance="?android:attr/textAppearanceMedium"
+    />
+
+<TextView
+    android:id="@+id/current_temperature_field"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_below="@id/details_field"
+    android:layout_centerHorizontal="true"
+    android:textColor="#FFFFFF"
+    android:textAppearance="?android:attr/textAppearanceLarge"
+
+    />
+
+<TextView
+    android:id="@+id/humidity_field"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_below="@id/current_temperature_field"
+    android:layout_centerHorizontal="true"
+    android:textColor="#FFFFFF"
+    android:textAppearance="?android:attr/textAppearanceMedium"
+    />
+<TextView
+    android:id="@+id/pressure_field"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_below="@id/humidity_field"
+    android:layout_centerHorizontal="true"
+    android:textColor="#FFFFFF"
+    android:textAppearance="?android:attr/textAppearanceMedium"
+    />
+
+</merge>

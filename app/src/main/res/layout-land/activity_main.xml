@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/main_view"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:weightSum="100">
+
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/app_toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="10"
+        android:background="?attr/colorPrimary"
+        android:textColor="#000000"
+        android:elevation="4dp"
+        android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
+        app:popupTheme="@style/ThemeOverlay.AppCompat.Light">
+
+        <ImageButton
+            android:id="@+id/refresh_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="left"
+            android:src="@drawable/refresh"
+            android:background="@null"
+            />
+
+        <TextView
+            android:id="@+id/toolbar_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="#FFFFFF"
+            android:layout_gravity="center"
+            android:textSize="22sp"
+            android:textStyle="bold"
+            />
+
+        <ImageButton
+            android:id="@+id/settings_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="right"
+            android:src="@drawable/settings"
+            android:background="@null"
+            />
+
+    </android.support.v7.widget.Toolbar>
+
+    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/day1"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:background="#3F51B5"
+        android:layout_weight="@integer/selected_day_layout_weight">
+
+        <include layout="@layout/weather_content"/>
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/day2"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="@integer/unselected_day_layout_weight"
+        android:background="#88b4fc">
+
+        <include layout="@layout/weather_content"/>
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/day3"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="@integer/unselected_day_layout_weight"
+        android:background="#5572a0">
+
+        <include layout="@layout/weather_content"/>
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/day4"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="@integer/unselected_day_layout_weight"
+        android:background="#145dd1">
+
+        <include layout="@layout/weather_content"/>
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/day5"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="@integer/unselected_day_layout_weight"
+        android:background="#afceff">
+
+        <include layout="@layout/weather_content"/>
+    </RelativeLayout>
+
+</LinearLayout>
