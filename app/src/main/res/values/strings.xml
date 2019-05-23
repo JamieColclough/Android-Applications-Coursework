@@ -4,5 +4,7 @@
     <string name="app_name">4Cast</string>
     <string name="activity_settings">4Cast: Settings</string>
 
+    <string name = "api_key">39324192e0e8d3f0aa6f9d1cb03331db</string>
+
 
 </resources>

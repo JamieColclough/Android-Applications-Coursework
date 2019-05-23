@@ -14,16 +14,29 @@ import android.widget.Toast;
 import com.fourcast.a4cast.Database.DatabaseInteractionAPI;
 import com.fourcast.a4cast.Utils.DayCustomiser;
 import com.fourcast.a4cast.WeatherSnapshot;
-import com.fourcast.a4cast.Web.AsyncWeatherResponse;
-import com.fourcast.a4cast.Web.CurrentWeatherAPI;
+import com.fourcast.a4cast.Web.CurrentWeather;
 import com.fourcast.a4cast.EventListeners.DayClickListener;
-import com.fourcast.a4cast.Web.ForecastWeatherAPI;
+import com.fourcast.a4cast.Web.ForecastWeather;
 import com.fourcast.a4cast.R;
+
+import java.io.IOException;
 import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.List;
 
 import com.fourcast.a4cast.Utils.GeneralCustomiser;
 import com.fourcast.a4cast.Utils.WebUtils;
+import com.fourcast.a4cast.Web.WeatherApi;
+
+import okhttp3.HttpUrl;
+import okhttp3.Interceptor;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
 
 /**
  * The main activity class for the application
@@ -32,6 +45,7 @@ public class MainActivity extends AppCompatActivity {
     LinearLayout mainView; //The entire activity view
     boolean isDayTime; //Boolean indicating whether it is currently day or night, used as a property as multiple methods reference it
     DatabaseInteractionAPI db; //
+    WeatherApi weatherApi;
 
 
     @Override
@@ -58,34 +72,42 @@ public class MainActivity extends AppCompatActivity {
         //Checks to see if app is online- decides how the data is obtained
         if(WebUtils.currentlyOnline(getApplicationContext())){
 
-            CurrentWeatherAPI currentWeatherTask = new CurrentWeatherAPI(new AsyncWeatherResponse() {
-                @Override
-                public void processFinish(ArrayList<WeatherSnapshot> currentWeatherData) {
-                    WeatherSnapshot day1 = currentWeatherData.get(0);
-                    setCurrentDayCustomisation(day1);//Sets customisation for today
-                    GeneralCustomiser.setNavBarText(mainView,day1.getLocation(),false);//Sets the nav bar text
-                    db.clearTable();
-                    db.setDay(day1);//Clears the db and replaces it with the data for today
-                }
-            },getApplicationContext());
 
-            ForecastWeatherAPI forecastTask = new ForecastWeatherAPI(new AsyncWeatherResponse() {
-                @Override
-                public void processFinish(ArrayList<WeatherSnapshot> currentWeatherData) {
-                    setFutureDayCustomisation(currentWeatherData);//Performs customisation for the remaining days in the forecast
-                }
-            },
-            getApplicationContext());
+
+            OkHttpClient okHttpClient = new OkHttpClient.Builder()
+                    .addInterceptor(new Interceptor() {
+                        @Override
+                        public okhttp3.Response intercept(Chain chain) throws IOException {
+                            Request originalRequest = chain.request();
+                            HttpUrl url = originalRequest.url().newBuilder()
+                                    .addQueryParameter("appId",getString(R.string.api_key))
+                                    .addQueryParameter("units", "metric")
+                                    .build();
+
+                            Request newRequest = originalRequest.newBuilder()
+                                    .url(url)
+                                    .build();
+                            return chain.proceed(newRequest);
+                        }
+                    })
+                    .build();
+
+            Retrofit retrofit = new Retrofit.Builder()
+                    .baseUrl("https://api.openweathermap.org/data/2.5/")
+                    .addConverterFactory(GsonConverterFactory.create())
+                    .client(okHttpClient)
+                    .build();
+
+            weatherApi = retrofit.create(WeatherApi.class);
 
             SharedPreferences sp = getSharedPreferences("customisation",Context.MODE_PRIVATE);//Gets customisation shared preferences
 
             String latitude = sp.getString("latitude","50.7236");//Finds the latitude and longitude of location to get forecast for
             String longitude = sp.getString("longitude","-3.5339");
 
-            currentWeatherTask.execute(latitude, longitude); //  asyncTask.execute("Latitude", "Longitude")
+            currentWeather(latitude, longitude);
 
-            forecastTask.execute(latitude, longitude);
-
+            forecastWeather(latitude, longitude);
 
         }
         else{//Case that device is offline, get's most recent forecast information from the db
@@ -134,6 +156,91 @@ public class MainActivity extends AppCompatActivity {
         );
     }
 
+    public void currentWeather(String lat, String lon){
+        Call<CurrentWeather> call = weatherApi.getCurrentWeather(lat, lon);
+
+        call.enqueue(new Callback<CurrentWeather>() {
+            @Override
+            public void onResponse(Call<CurrentWeather> call, Response<CurrentWeather> response) {
+                if(!response.isSuccessful()){
+                    Toast.makeText(getApplicationContext(),response.code(),Toast.LENGTH_LONG).show();
+                    return;
+                }
+                CurrentWeather cw = response.body();
+
+                WeatherSnapshot day1 = new WeatherSnapshot(
+                        0,
+                        cw.getLocation(),
+                        cw.getDescription(),
+                        cw.getTemp(),
+                        cw.getHumidity(),
+                        cw.getSpeed(),
+                        cw.getDate(),
+                        cw.getSunrise(),
+                        cw.getSunset()
+                );
+                setCurrentDayCustomisation(day1);//Sets customisation for today
+                GeneralCustomiser.setNavBarText(mainView, day1.getLocation(), false);//Sets the nav bar text
+                db.clearTable();
+                db.setDay(day1);//Clears the db and replaces it with the data for today
+
+            }
+
+            @Override
+            public void onFailure(Call<CurrentWeather> call, Throwable t) {
+                Toast.makeText(getApplicationContext(),t.getMessage(),Toast.LENGTH_LONG).show();
+
+            }
+        });
+
+    }
+
+
+    public void forecastWeather(String lat, String lon){
+        Call<ForecastWeather> call = weatherApi.getForecastWeather(lat, lon);
+
+        call.enqueue(new Callback<ForecastWeather>() {
+            @Override
+            public void onResponse(Call<ForecastWeather> call, Response<ForecastWeather> response) {
+                if(!response.isSuccessful()){
+                    Toast.makeText(getApplicationContext(),response.code(),Toast.LENGTH_LONG).show();
+                    return;
+                }
+                ForecastWeather body = response.body();
+                List<CurrentWeather> weatherList = body.getForecast();
+                ArrayList<WeatherSnapshot> allWeatherData = new ArrayList<>();
+                for (int i = 0; i < 5; i++) {
+                    CurrentWeather weatherEntry = weatherList.get(i * 8);//Finds a specific weather entry for each day, 8 indexes = 24 hours
+
+
+                    //Constructs a weather snapshot for this particular day
+                    WeatherSnapshot futureWeather = new WeatherSnapshot(
+                            i + 1,//Establishes what day it is
+                            "",
+                            weatherEntry.getDescription(),
+                            weatherEntry.getTemp(),
+                            weatherEntry.getHumidity(),
+                            weatherEntry.getSpeed(),
+                            weatherEntry.getDate(),
+                            0,
+                            0
+                    );
+                    allWeatherData.add(futureWeather);//Adds this day to the forecase
+
+                }
+                setFutureDayCustomisation(allWeatherData);
+            }
+
+            @Override
+            public void onFailure(Call<ForecastWeather> call, Throwable t) {
+                Toast.makeText(getApplicationContext(),t.getMessage(),Toast.LENGTH_LONG).show();
+
+            }
+        });
+
+    }
+
+
     /**
      * Method to call the various customisation methods for the current day
      * @param day1 Weather information for the current day
@@ -150,10 +257,13 @@ public class MainActivity extends AppCompatActivity {
         GeneralCustomiser.setAppColourScheme(isDayTime,mainView,getApplicationContext()); //Sets the color scheme for current day as this contains the relevant weather data
     }
 
+
+
     /**
      * Method to call the various customisation methods for each of the remaining days in the forecase
      * @param forecast Weather information for the remaining days
      */
+
     public void setFutureDayCustomisation(ArrayList<WeatherSnapshot> forecast){
         WeatherSnapshot weatherToAdd;
         for (int i =2; i<6;i++){

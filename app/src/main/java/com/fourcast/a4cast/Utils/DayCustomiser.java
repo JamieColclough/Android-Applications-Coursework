@@ -42,9 +42,9 @@ public class DayCustomiser {
         dateField.setText(snapshot.getForecastDate());
         timeField.setText(snapshot.getForecastTime());
         detailsField.setText(snapshot.getDesc());
-        currentTemperatureField.setText(snapshot.getTemp());
-        humidity_field.setText(snapshot.getHumidity());
-        pressure_field.setText(snapshot.getSpeed());
+        currentTemperatureField.setText(String.valueOf(snapshot.getTemp()));
+        humidity_field.setText(String.valueOf(snapshot.getHumidity()));
+        pressure_field.setText(String.valueOf(snapshot.getSpeed()));
         //Sets the image for the day
         setWeatherImage(snapshot.getDesc(),weatherImage,isDayTime,context);
     }

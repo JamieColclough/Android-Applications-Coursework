@@ -62,6 +62,7 @@ public class SetNewLocationListener  implements View.OnClickListener {
             customisationEditor.putString("longitude", longitude);
             customisationEditor.apply();//Applies changes
             Intent redirectToMain = new Intent(context,	MainActivity.class);
+            redirectToMain.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             context.startActivity(redirectToMain);//Redirects to and restarts the main activity to attempt to load in the data for the new coordinates
         }
         else{

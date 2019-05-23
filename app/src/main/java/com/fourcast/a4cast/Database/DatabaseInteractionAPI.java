@@ -1,7 +1,6 @@
 package com.fourcast.a4cast.Database;
 
 import android.content.ContentValues;
-import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
@@ -10,7 +9,6 @@ import com.fourcast.a4cast.WeatherSnapshot;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.util.ArrayList;
-import java.util.Date;
 
 /**
  * Helper class for interacting with the database
@@ -116,7 +114,7 @@ public class DatabaseInteractionAPI {
         entry.put("description", day.getDesc());
         entry.put("temperature", day.getTempRaw());
         entry.put("humidity", day.getHumidityRaw());
-        entry.put("windSpeed", day.getSpeed());
+        entry.put("windSpeed", day.getSpeedRaw());
         entry.put("updatedOn", day.getUpdatedOnRaw());
         entry.put("sunrise",day.getSunrise());
         entry.put("sunset",day.getSunset());

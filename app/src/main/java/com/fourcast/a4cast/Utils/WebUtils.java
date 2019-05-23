@@ -47,7 +47,7 @@ public class WebUtils {
      */
     public static JSONObject getWeatherJSON(String lat, String lon, String url,String key){
         try {
-            URL connectionUrl = new URL(String.format(url, lat, lon,key));
+            URL connectionUrl = new URL("http://api.openweathermap.org/data/2.5/weather?lat=50.7236&lon=-3.5339&units=metric&appid=39324192e0e8d3f0aa6f9d1cb03331db");
             HttpURLConnection connection =
                     (HttpURLConnection)connectionUrl.openConnection();//Tries to open a connection
 

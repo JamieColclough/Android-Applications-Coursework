@@ -91,13 +91,19 @@ public class WeatherSnapshot {
      * Method to return the humidity in a raw format
      * @return The formatted string
      */
-    public String getHumidityRaw(){return "Humidity: " + this.humidity + "%";}
+    public String getHumidityRaw(){return this.humidity;}
 
     /**
      * Method to return the wind speed, formatted for display
      * @return the formatted string
      */
     public String getSpeed(){return "Wind Speed: " + this.speed + " m/s";}
+
+    /**
+     * Method to return the wind speed, formatted for display
+     * @return the formatted string
+     */
+    public String getSpeedRaw(){return this.speed;}
 
     /**
      * Method to return the date of the forecast
@@ -151,8 +157,8 @@ public class WeatherSnapshot {
      * @return boolean indicaing whether or not it is daytime
      */
     public boolean isDayTime(){
-        long currentTime = new Date().getTime();
-        if(currentTime>=sunrise && currentTime<sunset){return true;}
+        long currentTime = updatedOn.getTime();
+        if(currentTime>=(sunrise*1000) && currentTime<(1000*sunset)){return true;}
         return false;
     }
 
